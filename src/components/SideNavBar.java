@@ -1,6 +1,5 @@
 package components;
 
-import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -16,7 +15,7 @@ import javax.swing.JPanel;
 public class SideNavBar extends JPanel {
 	public String[] priviliges;
 	ArrayList<Object[]> comboBoxItems = new ArrayList<Object[]>();
-	public Choice projectComboBox;
+
 	Color labelBackgroundColors = new Color(196, 219, 250);
 	Color labelForegroundColors = Color.BLACK;
 	public JButton reportBugButton, testBugsReportedButton, devBugsReportedButton, manageMembersButton,
@@ -28,12 +27,7 @@ public class SideNavBar extends JPanel {
 		Color backgroundColor = new Color(211, 211, 211);
 		setBackground(backgroundColor);
 
-		projectComboBox = new Choice();
-
-		renderComboBoxItems();
 		List<JComponent> components = renderSideBar();
-
-		add(projectComboBox);
 		for (JComponent component : components) {
 			add(component);
 		}
@@ -124,15 +118,4 @@ public class SideNavBar extends JPanel {
 		return components;
 	}
 
-	private void renderComboBoxItems() {
-		projectComboBox.removeAll();
-		for (int i = 0; i < comboBoxItems.size(); i++) {
-			Object array[] = comboBoxItems.get(i);
-			String name = (String) array[1];
-			if (!name.equals("") || !name.equals(" ")) {
-				projectComboBox.addItem(name);
-			}
-		}
-
-	}
 }

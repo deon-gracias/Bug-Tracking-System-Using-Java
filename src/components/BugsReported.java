@@ -6,6 +6,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -18,11 +23,17 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 public class BugsReported extends JPanel {
-	Vector data;
-	Vector columns;
+	Vector data = new Vector();
+	Vector columnHeaders = new Vector();
 	DefaultTableModel model;
+	Connection conn;
+	int userId;
+	int projectId;
 
-	public BugsReported() {
+	public BugsReported(Connection conn, int userId, int projectId) {
+		this.userId = userId;
+		this.projectId = projectId;
+		this.conn = conn;
 		Color backgroundColor = new Color(242, 243, 244);
 		setBackground(backgroundColor);
 		Color btnColor = new Color(52, 132, 240);
@@ -30,21 +41,14 @@ public class BugsReported extends JPanel {
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
-		data = new Vector();
-		columns = new Vector();
-
-		String dummyData[][] = { { "101", "Amit", "Bug 1", "0", "aawdsadwdasdsadwdsadwdasd", "Done" },
-				{ "102", "Jai", "Bug 2", "1", "awdsadwdsfsvsvfdfgrfdgdr", "Pending" },
-				{ "103", "Sachin", "Bug 3", "2", "uiymhjgjyjhghghtftfhyubnbvnft", "Pending" } };
-		String dummyColumns[] = { "Id", "Name", "Title", "Priority", "Description", "Status" };
-		setData(dummyData, dummyColumns);
+		setData();
 
 //		JTable
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.gridwidth = 0;
-		model = new DefaultTableModel(this.data, this.columns);
+		model = new DefaultTableModel(this.data, this.columnHeaders);
 		JTable table = new JTable(model) {
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -87,12 +91,14 @@ public class BugsReported extends JPanel {
 				if (table.getSelectedRow() != -1) {
 					// remove selected row from the model
 					int rowSelect = table.getSelectedRow();
-					String value = (String) model.getValueAt(rowSelect, 5);
+					int id = Integer.parseInt((String) model.getValueAt(rowSelect, 0));
+					String value = (String) model.getValueAt(rowSelect, 4);
 					String status = value.equals("Pending") ? "Done" : "Pending";
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you want to mark as " + status + " ?");
 					if (a == JOptionPane.YES_OPTION) {
 						// remove selected row from the model
-						model.setValueAt(status, rowSelect, 5);
+						updateBugStatus(id, status);
+						model.setValueAt(status, rowSelect, 4);
 					}
 				}
 			}
@@ -107,6 +113,52 @@ public class BugsReported extends JPanel {
 		setPreferredSize(new Dimension(585, 600));
 	}
 
+	String[][] getData() {
+		PreparedStatement ps;
+		try {
+			ps = conn.prepareStatement(
+					"SELECT id,title,priority,description,status,reportedBy FROM Bugs WHERE reportedBy=? AND pid=? ");
+			ps.setInt(1, userId);
+			ps.setInt(2, projectId);
+			ResultSet rs = ps.executeQuery();
+
+			ArrayList<String[]> listdata = new ArrayList<String[]>();
+			int i = 0;
+			while (rs.next()) {
+				String[] tempdata = new String[6];
+				tempdata[0] = rs.getString("id");
+				tempdata[1] = rs.getString("title");
+				tempdata[2] = rs.getString("priority");
+				tempdata[3] = rs.getString("description");
+				tempdata[4] = rs.getString("status");
+				int uid = rs.getInt("reportedBy");
+				ps = conn.prepareStatement("SELECT user_name FROM Users WHERE id=?;");
+				ps.setInt(1, uid);
+				ResultSet rs1 = ps.executeQuery();
+				if (rs1.next()) {
+					tempdata[5] = rs1.getString("user_name");
+				}
+				listdata.add(tempdata);
+			}
+
+			String[][] data = new String[listdata.size()][6];
+			for (int n = 0; n < listdata.size(); n++) {
+				String[] temp = listdata.get(n);
+				data[n][0] = temp[0];
+				data[n][1] = temp[1];
+				data[n][2] = temp[2];
+				data[n][3] = temp[3];
+				data[n][4] = temp[4];
+				data[n][5] = temp[5];
+			}
+			return data;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 	protected String rowDataToString(int row) {
 		String dataString = "";
 		for (int i = 0; i < model.getColumnCount(); i++) {
@@ -115,8 +167,9 @@ public class BugsReported extends JPanel {
 		return dataString;
 	}
 
-	public void setData(String[][] data, String[] cols) {
-
+	public void setData() {
+		String[][] data = getData();
+		String cols[] = { "Id", "Title", "Priority", "Description", "Status", "Reported By" };
 		for (String[] ele : data) {
 			Vector info = new Vector();
 			for (String anotherele : ele) {
@@ -125,11 +178,22 @@ public class BugsReported extends JPanel {
 			this.data.add(info);
 		}
 		for (int i = 0; i < cols.length; i++) {
-			this.columns.add(cols[i]);
+			this.columnHeaders.add(cols[i]);
 		}
 	}
 
 	public void dataModified() {
 		this.data = model.getDataVector();
+	}
+
+	public void updateBugStatus(int id, String status) {
+		try {
+			PreparedStatement ps = conn.prepareStatement("UPDATE Bugs SET status = ? WHERE id=?;");
+			ps.setString(1, status);
+			ps.setInt(2, id);
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

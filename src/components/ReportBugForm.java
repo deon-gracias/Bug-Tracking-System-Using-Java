@@ -5,10 +5,16 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -16,11 +22,14 @@ import javax.swing.border.EmptyBorder;
 
 public class ReportBugForm extends JPanel {
 	String title, priority, desc;
+	int userId, projectId;
 	JTextField titleField, priorityField;
 	JTextArea descField;
 	JButton submitBtn;
+	Connection conn;
 
-	public ReportBugForm() {
+	public ReportBugForm(Connection conn, int userId, int projectId) {
+		this.conn = conn;
 
 		Color backgroundColor = new Color(242, 243, 244);
 		setBackground(backgroundColor);
@@ -67,7 +76,48 @@ public class ReportBugForm extends JPanel {
 		gbc.gridy = 7;
 		add(submitBtn, gbc);
 
+		submitBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				String title = titleField.getText();
+				String priority = priorityField.getText();
+				String description = descField.getText();
+
+				if (title.equals("") || title.equals(" ")) {
+					JOptionPane.showMessageDialog(null, "Title Field is empty.");
+					return;
+				} else if (priority.equals("") || priority.equals(" ")) {
+					JOptionPane.showMessageDialog(null, "Priority Field is empty.");
+					return;
+				} else if (description.equals("") || description.equals(" ")) {
+					JOptionPane.showMessageDialog(null, "Description Field is empty.");
+					return;
+				} else {
+					submitBugReportForm(title, priority, description, userId, projectId);
+					titleField.setText("");
+					priorityField.setText("");
+					descField.setText("");
+				}
+
+			}
+		});
+
 		setBorder(new EmptyBorder(10, 10, 10, 10));
 		setPreferredSize(new Dimension(585, 600));
+	}
+
+	void submitBugReportForm(String title, String priority, String description, int userId, int projectId) {
+		try {
+			PreparedStatement ps = conn.prepareStatement(
+					"INSERT INTO Bugs(title,priority,description,status,reportedBy,pid) VALUES(?,?,?,?,?,?);");
+			ps.setString(1, title);
+			ps.setString(2, priority);
+			ps.setString(3, description);
+			ps.setString(4, "Pending");
+			ps.setInt(5, userId);
+			ps.setInt(6, projectId);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
