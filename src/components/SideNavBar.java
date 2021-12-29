@@ -102,16 +102,6 @@ public class SideNavBar extends JPanel {
 //				reportBugButton.setOpaque(false);
 				components.add(reportBugButton);
 
-//				Tester Bugs Reported Button
-				testBugsReportedButton = new JButton("Bugs Reported By You");
-				testBugsReportedButton.setFocusPainted(false);
-				testBugsReportedButton.setForeground(Color.BLACK);
-				testBugsReportedButton.setBackground(Color.WHITE);
-				testBugsReportedButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-				testBugsReportedButton.addMouseListener(new HighLightEffect());
-//				testBugsReportedButton.setOpaque(false);
-				components.add(testBugsReportedButton);
-
 				continue;
 			}
 		}

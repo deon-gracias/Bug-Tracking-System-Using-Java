@@ -117,9 +117,8 @@ public class BugsReported extends JPanel {
 		PreparedStatement ps;
 		try {
 			ps = conn.prepareStatement(
-					"SELECT id,title,priority,description,status,reportedBy FROM Bugs WHERE reportedBy=? AND pid=? ");
-			ps.setInt(1, userId);
-			ps.setInt(2, projectId);
+					"SELECT id,title,priority,description,status,reportedBy FROM Bugs WHERE pid=? ");
+			ps.setInt(1, projectId);
 			ResultSet rs = ps.executeQuery();
 
 			ArrayList<String[]> listdata = new ArrayList<String[]>();

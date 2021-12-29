@@ -53,7 +53,7 @@ public class ManageMembers extends JPanel {
 		table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 		add(new JScrollPane(table), gbc);
 
-//		Remove User Button
+//		Add User Button
 		gbc.gridx = 1;
 		gbc.gridy = 2;
 		gbc.gridwidth = 0;
@@ -63,9 +63,10 @@ public class ManageMembers extends JPanel {
 			public void actionPerformed(ActionEvent ae) {
 				int uid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter User Id"));
 				try {
-					PreparedStatement ps = conn.prepareStatement("INSERT INTO Privileges(uid,pid) VALUES (?,?)");
+					PreparedStatement ps = conn.prepareStatement("INSERT INTO Privileges(uid,pid,type) VALUES (?,?,?)");
 					ps.setInt(1, uid);
 					ps.setInt(2, projectId);
+					ps.setString(3, "tester");
 					ps.executeUpdate();
 					ps = conn.prepareStatement("SELECT user_name FROM Users WHERE uid = ?;");
 					ps.setInt(1, uid);
@@ -74,7 +75,7 @@ public class ManageMembers extends JPanel {
 					if (rs.next()) {
 						username = rs.getString("user_name");
 					}
-					model.addRow(new Object[] { uid, username, "false", "false", "false" });
+					model.addRow(new Object[] { uid, username, "false", "false", "true" });
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -198,12 +199,14 @@ public class ManageMembers extends JPanel {
 					tempdata[3] = temp[3];
 					tempdata[4] = temp[4];
 				}
+				if(!rs.wasNull()){
 				if (type.equals("admin")) {
-					tempdata[2] = "true";
-				} else if (type.equals("developer")) {
-					tempdata[3] = "true";
-				} else {
-					tempdata[4] = "true";
+						tempdata[2] = "true";
+					} else if (type.equals("developer")) {
+						tempdata[3] = "true";
+					} else {
+						tempdata[4] = "true";
+					}
 				}
 
 				listdata.put(Integer.parseInt(tempdata[0]), tempdata);
