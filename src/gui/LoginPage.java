@@ -38,15 +38,17 @@ public class LoginPage extends JFrame {
 	public void authenticate() {
 
 		try {
+			// SQL Statement for fetching user info
 			PreparedStatement st = (PreparedStatement) this.conn
 					.prepareStatement("Select id,user_name, password from Users where user_name=? and password=?");
-
 			st.setString(1, username);
 			st.setString(2, password);
+
+			// Execute SQL Statement
 			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
-				dispose();
-				userId = rs.getInt("id");
+				dispose(); // Disposing Login Page JFrame
+				userId = rs.getInt("id"); // Get user id from result set
 				chooseProject();
 			} else {
 				JOptionPane.showMessageDialog(null, "Wrong Username & Password");
@@ -56,16 +58,21 @@ public class LoginPage extends JFrame {
 		}
 	}
 
-	public void chooseProject()
+	public void chooseProject() {
 
-	{
+		// Creating Dialog Box
 		JDialog d = new JDialog();
 		d.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
+
+		// Get Data related to projects and privileges
 		getData();
+
 		gbc.gridx = 1;
 		gbc.gridy = 1;
+
 		JComboBox comboBox = new JComboBox();
+		// Adding projects to combo box 
 		for (Object[] project : projects) {
 			comboBox.addItem(project[1]);
 		}
@@ -76,6 +83,7 @@ public class LoginPage extends JFrame {
 		JButton b = new JButton("Continue");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Get Selected Project and Open Main Page
 				int index = comboBox.getSelectedIndex();
 				Object[] project = projects.get(index);
 				privileges = allProjectPrivileges.get(project[0]);
@@ -90,7 +98,9 @@ public class LoginPage extends JFrame {
 	}
 
 	public LoginPage(Connection conn) {
+		// Overriding Defaults of Java Swing
 		setUIFont(new javax.swing.plaf.FontUIResource("Arial", Font.PLAIN, 14));
+
 		setLayout(new GridBagLayout());
 		Color backgroundColor = new Color(242, 243, 244);
 		setBackground(backgroundColor);
@@ -123,10 +133,15 @@ public class LoginPage extends JFrame {
 
 		gbc.gridy = 7;
 		JButton submitBtn = new JButton("Submit");
+
+		// When submit button is clicked
 		submitBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
+				// Get username and password from text fields
 				password = new String(passwordField.getPassword());
 				username = usernameField.getText();
+
+				// Check if text fields are not empty
 				if (username.equals("") || username.equals(" ")) {
 					JOptionPane.showMessageDialog(null, "Username Cannot be left blank", "",
 							JOptionPane.WARNING_MESSAGE);
@@ -136,6 +151,7 @@ public class LoginPage extends JFrame {
 							JOptionPane.WARNING_MESSAGE);
 					return;
 				} else {
+					// Autheticate User
 					authenticate();
 				}
 			}
@@ -153,6 +169,7 @@ public class LoginPage extends JFrame {
 		setTitle("Login");
 	}
 
+	// Change UI defaults
 	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
 		Enumeration<Object> keys = UIManager.getDefaults().keys();
 		while (keys.hasMoreElements()) {
@@ -165,15 +182,18 @@ public class LoginPage extends JFrame {
 
 	public void getData() {
 		try {
+			// Get privileges associated with the user authenticated
 			PreparedStatement statement = conn.prepareStatement("SELECT pid,type FROM Privileges WHERE uid = ?");
-
 			statement.setInt(1, userId);
-			ResultSet rs = statement.executeQuery();
 
+			// Execute Query
+			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				String type = rs.getString("type");
 				int pid = rs.getInt("pid");
 				Boolean exists = false;
+
+				// Check if Project exists in allProjectPrivileges
 				for (int i : allProjectPrivileges.keySet()) {
 					if (i == pid) {
 						exists = true;
@@ -181,14 +201,16 @@ public class LoginPage extends JFrame {
 					}
 				}
 
-//				Checking if project already exists in Dictionary
 				if (!exists) {
 					String[] temparr = type.equals("admin") ? (new String[] { "admin", "", "" })
 							: (type.equals("developer") ? new String[] { "", "developer", "" }
 									: new String[] { "", "", "tester" });
+
+					// Add to allProjectPrivileges
 					allProjectPrivileges.put(pid, temparr);
 
 				} else {
+					// If project exist in allProjectPrivileges
 					String[] temparr = new String[3];
 					temparr = allProjectPrivileges.get(pid);
 					if (type.equals("admin")) {
@@ -201,13 +223,13 @@ public class LoginPage extends JFrame {
 				}
 			}
 
-//			Setting The First Projects Privileges by default
+			// Setting The First Projects Privileges by default
 			if (!allProjectPrivileges.isEmpty()) {
 				Object[] keys = allProjectPrivileges.keySet().toArray();
 				this.privileges = allProjectPrivileges.get((Integer) keys[0]);
 			}
 
-//			Finding all Project Names
+			// Finding all Project Names
 			for (Integer i : allProjectPrivileges.keySet()) {
 				statement = conn.prepareStatement("SELECT id, project_name FROM Projects WHERE id=?");
 				statement.setInt(1, i);

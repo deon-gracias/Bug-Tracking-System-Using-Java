@@ -78,10 +78,12 @@ public class ReportBugForm extends JPanel {
 
 		submitBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
+				// Get Form Data
 				String title = titleField.getText();
 				String priority = priorityField.getText();
 				String description = descField.getText();
 
+				// Checking if fields are empty
 				if (title.equals("") || title.equals(" ")) {
 					JOptionPane.showMessageDialog(null, "Title Field is empty.");
 					return;
@@ -92,7 +94,10 @@ public class ReportBugForm extends JPanel {
 					JOptionPane.showMessageDialog(null, "Description Field is empty.");
 					return;
 				} else {
+					// Submit Bug Report => Storing in Database
 					submitBugReportForm(title, priority, description, userId, projectId);
+
+					// Resetting Fields
 					titleField.setText("");
 					priorityField.setText("");
 					descField.setText("");
@@ -107,6 +112,7 @@ public class ReportBugForm extends JPanel {
 
 	void submitBugReportForm(String title, String priority, String description, int userId, int projectId) {
 		try {
+			// SQL Insert Statement
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO Bugs(title,priority,description,status,reportedBy,pid) VALUES(?,?,?,?,?,?);");
 			ps.setString(1, title);
@@ -115,6 +121,8 @@ public class ReportBugForm extends JPanel {
 			ps.setString(4, "Pending");
 			ps.setInt(5, userId);
 			ps.setInt(6, projectId);
+
+			// Execute Statement
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

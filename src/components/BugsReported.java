@@ -41,24 +41,28 @@ public class BugsReported extends JPanel {
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
+		// Set Data
 		setData();
 
-//		JTable
+		// JTable
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.gridwidth = 0;
+		// Setting up table model using data and column headers
 		model = new DefaultTableModel(this.data, this.columnHeaders);
+
 		JTable table = new JTable(model) {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			};
 		};
+
 		table.setAutoCreateRowSorter(true);
 		table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 		add(new JScrollPane(table), gbc);
 
-//		Remove User Button
+		// View Bug
 		gbc.gridx = 1;
 		gbc.gridy = 2;
 		gbc.gridwidth = 0;
@@ -66,6 +70,7 @@ public class BugsReported extends JPanel {
 		viewButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
+				// Show Bug Info in a Option Pane
 				if (table.getSelectedRow() != -1) {
 					int row = table.getSelectedRow();
 					String dataString = rowDataToString(row);
@@ -79,7 +84,7 @@ public class BugsReported extends JPanel {
 		viewButton.setBackground(btnColor);
 		add(viewButton, gbc);
 
-//		Toggle Button
+		// Mark Bug as Completed or Pending
 		gbc.gridx = 1;
 		gbc.gridy = 3;
 		gbc.gridwidth = 1;
@@ -89,7 +94,6 @@ public class BugsReported extends JPanel {
 			public void actionPerformed(ActionEvent ae) {
 				// check for selected row first
 				if (table.getSelectedRow() != -1) {
-					// remove selected row from the model
 					int rowSelect = table.getSelectedRow();
 					int id = Integer.parseInt((String) model.getValueAt(rowSelect, 0));
 					String value = (String) model.getValueAt(rowSelect, 4);
@@ -116,11 +120,12 @@ public class BugsReported extends JPanel {
 	String[][] getData() {
 		PreparedStatement ps;
 		try {
+			// Get Data from Bugs Table where Project ID is the same as the one in use
 			ps = conn.prepareStatement(
 					"SELECT id,title,priority,description,status,reportedBy FROM Bugs WHERE pid=? ");
 			ps.setInt(1, projectId);
-			ResultSet rs = ps.executeQuery();
 
+			ResultSet rs = ps.executeQuery();
 			ArrayList<String[]> listdata = new ArrayList<String[]>();
 			int i = 0;
 			while (rs.next()) {
@@ -131,12 +136,17 @@ public class BugsReported extends JPanel {
 				tempdata[3] = rs.getString("description");
 				tempdata[4] = rs.getString("status");
 				int uid = rs.getInt("reportedBy");
+
+				// Get username with corresponding user id
 				ps = conn.prepareStatement("SELECT user_name FROM Users WHERE id=?;");
 				ps.setInt(1, uid);
+
 				ResultSet rs1 = ps.executeQuery();
 				if (rs1.next()) {
 					tempdata[5] = rs1.getString("user_name");
 				}
+
+				// Added data in last => Id, title, priority, desc, status, reportedBy(username)
 				listdata.add(tempdata);
 			}
 
@@ -167,15 +177,23 @@ public class BugsReported extends JPanel {
 	}
 
 	public void setData() {
+		// Get Data
 		String[][] data = getData();
+
 		String cols[] = { "Id", "Title", "Priority", "Description", "Status", "Reported By" };
+
+		// Iterating throght data array
 		for (String[] ele : data) {
 			Vector info = new Vector();
+			// adding in vector
 			for (String anotherele : ele) {
 				info.add(anotherele);
 			}
+			// Added vector in main Data
 			this.data.add(info);
 		}
+		
+		// Setting column headers
 		for (int i = 0; i < cols.length; i++) {
 			this.columnHeaders.add(cols[i]);
 		}

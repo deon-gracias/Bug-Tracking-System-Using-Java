@@ -47,7 +47,7 @@ public class SideNavBar extends JPanel {
 				jlabel.setForeground(labelForegroundColors);
 				components.add(jlabel);
 
-//				Report Bug Button
+				// Manage Members Button
 				manageMembersButton = new JButton("Manage Members");
 				manageMembersButton.setFocusPainted(false);
 				manageMembersButton.setForeground(Color.BLACK);
@@ -65,7 +65,7 @@ public class SideNavBar extends JPanel {
 				jlabel.setForeground(labelForegroundColors);
 				components.add(jlabel);
 
-//				Report Bug Button
+				// Report Bug Button
 				devReportBugButton = new JButton("Report Bug");
 				devReportBugButton.setFocusPainted(false);
 				devReportBugButton.setForeground(Color.BLACK);
@@ -74,7 +74,7 @@ public class SideNavBar extends JPanel {
 				devReportBugButton.addMouseListener(new HighLightEffect());
 				components.add(devReportBugButton);
 
-//				Developer Bugs Reported Button
+				// Developer Bugs Reported Button
 				devBugsReportedButton = new JButton("Bugs Reported");
 				devBugsReportedButton.setFocusPainted(false);
 				devBugsReportedButton.setForeground(Color.BLACK);
@@ -92,14 +92,14 @@ public class SideNavBar extends JPanel {
 				jlabel.setForeground(labelForegroundColors);
 				components.add(jlabel);
 
-//				Report Bug Button
+				// Report Bug Button
 				reportBugButton = new JButton("Report Bug");
 				reportBugButton.setFocusPainted(false);
 				reportBugButton.setForeground(Color.BLACK);
 				reportBugButton.setBackground(Color.WHITE);
 				reportBugButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 				reportBugButton.addMouseListener(new HighLightEffect());
-//				reportBugButton.setOpaque(false);
+				// reportBugButton.setOpaque(false);
 				components.add(reportBugButton);
 
 				continue;

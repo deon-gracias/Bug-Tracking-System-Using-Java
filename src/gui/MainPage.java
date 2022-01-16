@@ -41,6 +41,7 @@ public class MainPage extends JFrame {
 		Color backgroundColor = new Color(247, 247, 247);
 		container.setBackground(backgroundColor);
 
+		// Custom Components
 		SideNavBar sideNavBar = new SideNavBar(privileges, projects);
 		ReportBugForm reportBugForm = new ReportBugForm(conn, userId, projectId);
 		ManageMembers manageMembers = new ManageMembers(conn, userId, projectId);

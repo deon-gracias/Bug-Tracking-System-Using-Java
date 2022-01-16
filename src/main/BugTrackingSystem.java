@@ -9,6 +9,7 @@ import gui.LoginPage;
 
 public class BugTrackingSystem {
 
+	// Database String
 	private String database = "./src/BugTrackingDatabase.accdb";
 	private Connection conn;
 
@@ -32,16 +33,24 @@ public class BugTrackingSystem {
 
 	public static void main(String[] args) {
 		BugTrackingSystem bgs = new BugTrackingSystem();
+
+		// Loading UCanAccess Driver
 		try {
 			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 		} catch (Exception e) {
 			System.out.println("Error in Loading Driver");
 		}
+
+		// Create Connection
 		bgs.createConnection();
+
+		// If Connection was successful
 		if (bgs.conn != null) {
+			// Running asynchronously
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
+						// Launch Login Page
 						LoginPage loginPage = new LoginPage(bgs.conn);
 					} catch (Exception e) {
 						e.printStackTrace();
