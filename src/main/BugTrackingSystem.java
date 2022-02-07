@@ -51,7 +51,7 @@ public class BugTrackingSystem {
 				public void run() {
 					try {
 						// Launch Login Page
-						LoginPage loginPage = new LoginPage(bgs.conn);
+						new LoginPage(bgs.conn);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

@@ -27,6 +27,10 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 public class LoginPage extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6136029085648292693L;
 	String username;
 	String password;
 	int userId, currentPid;
@@ -71,7 +75,7 @@ public class LoginPage extends JFrame {
 		gbc.gridx = 1;
 		gbc.gridy = 1;
 
-		JComboBox comboBox = new JComboBox();
+		JComboBox<Object> comboBox = new JComboBox<Object>();
 		// Adding projects to combo box 
 		for (Object[] project : projects) {
 			comboBox.addItem(project[1]);
@@ -89,7 +93,7 @@ public class LoginPage extends JFrame {
 				privileges = allProjectPrivileges.get(project[0]);
 				currentPid = (int) project[0];
 				d.dispose();
-				MainPage main = new MainPage(conn, userId, privileges, projects, currentPid);
+				new MainPage(conn, userId, privileges, projects, currentPid);
 			}
 		});
 		d.add(b, gbc);

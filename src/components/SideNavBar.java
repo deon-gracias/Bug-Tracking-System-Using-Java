@@ -13,6 +13,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class SideNavBar extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 452944303545157144L;
 	public String[] priviliges;
 	ArrayList<Object[]> comboBoxItems = new ArrayList<Object[]>();
 

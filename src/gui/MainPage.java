@@ -21,6 +21,10 @@ import components.ReportBugForm;
 import components.SideNavBar;
 
 public class MainPage extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3826054681629138296L;
 	int userId;
 	Connection conn;
 	String[] privileges = { "", "", "" };

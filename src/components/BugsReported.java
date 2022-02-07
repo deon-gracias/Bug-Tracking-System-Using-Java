@@ -23,6 +23,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 public class BugsReported extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6217991520789491097L;
 	Vector data = new Vector();
 	Vector columnHeaders = new Vector();
 	DefaultTableModel model;
@@ -53,6 +57,11 @@ public class BugsReported extends JPanel {
 		model = new DefaultTableModel(this.data, this.columnHeaders);
 
 		JTable table = new JTable(model) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -3748816572360557973L;
+
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			};
@@ -127,7 +136,6 @@ public class BugsReported extends JPanel {
 
 			ResultSet rs = ps.executeQuery();
 			ArrayList<String[]> listdata = new ArrayList<String[]>();
-			int i = 0;
 			while (rs.next()) {
 				String[] tempdata = new String[6];
 				tempdata[0] = rs.getString("id");
@@ -184,7 +192,7 @@ public class BugsReported extends JPanel {
 
 		// Iterating throght data array
 		for (String[] ele : data) {
-			Vector info = new Vector();
+			Vector<String> info = new Vector<String>();
 			// adding in vector
 			for (String anotherele : ele) {
 				info.add(anotherele);

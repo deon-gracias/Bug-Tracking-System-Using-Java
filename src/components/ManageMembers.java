@@ -21,6 +21,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class ManageMembers extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3910207224709691748L;
 	Connection conn;
 	int userId, projectId;
 	Vector data = new Vector();
@@ -49,6 +53,11 @@ public class ManageMembers extends JPanel {
 		// Creating table model and using the data and column headers
 		model = new DefaultTableModel(this.data, this.columnHeaders);
 		JTable table = new JTable(model) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -3189089986264441360L;
+
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			};

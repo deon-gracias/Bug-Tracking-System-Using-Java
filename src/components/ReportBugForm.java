@@ -21,6 +21,10 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class ReportBugForm extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 882094479791383453L;
 	String title, priority, desc;
 	int userId, projectId;
 	JTextField titleField, priorityField;
